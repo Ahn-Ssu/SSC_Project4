@@ -41,11 +41,11 @@ public class ImageIOSurpporter {
 		 }
 	}
 	
-	public BufferedImage ResizeImage() {
+	public BufferedImage ResizeImage(int w, int h) {
 		try {
 			buffImage = ImageIO.read(new File(filePath));
-			Image temp = buffImage.getScaledInstance(800, 600, Image.SCALE_SMOOTH);
-			buffImage = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
+			Image temp = buffImage.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+			buffImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 			
 			Graphics2D g2d = buffImage.createGraphics();
 			g2d.drawImage(temp, 0, 0, null);
