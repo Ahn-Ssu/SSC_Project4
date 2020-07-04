@@ -15,30 +15,12 @@ public class EdgeDetection {
 	public static final String SOBEL_FILTER_HORIZONTAL = "Sobel Horizontal Filter";
 	public static final String SCHARR_FILTER_VETICAL = "Scharr Vertical Filter";
 	public static final String SCHARR_FILTER_HORIZONTAL = "Scharr Horizontal Filter";
-	private static final double[][] FILTER_VERTICAL = {
-			{ 1, 0, -1 }, 
-			{ 1, 0, -1 }, 
-			{ 1, 0, -1 } };
-	private static final double[][] FILTER_HORIZONTAL = { 
-			{ 1, 1, 1 }, 
-			{ 0, 0, 0 },
-			{ -1, -1, -1 } };
-	private static final double[][] FILTER_SOBEL_V = { 
-			{ 1, 0, -1 },
-			{ 2, 0, -2 }, 
-			{ 1, 0, -1 } };
-	private static final double[][] FILTER_SOBEL_H = { 
-			{ 1, 2, 1 }, 
-			{ 0, 0, 0 }, 
-			{ -1, -2, -1 } };
-	private static final double[][] FILTER_SCHARR_V = { 
-			{ 3, 0, -3 },
-			{ 10, 0, -10 }, 
-			{ 3, 0, -3 } };
-	private static final double[][] FILTER_SCHARR_H = { 
-			{ 3, 10, 3 },
-			{ 0, 0, 0 },
-			{ -3, -10, -3 } };
+	private static final double[][] FILTER_VERTICAL = { { 1, 0, -1 }, { 1, 0, -1 }, { 1, 0, -1 } };
+	private static final double[][] FILTER_HORIZONTAL = { { 1, 1, 1 }, { 0, 0, 0 }, { -1, -1, -1 } };
+	private static final double[][] FILTER_SOBEL_V = { { 1, 0, -1 }, { 2, 0, -2 }, { 1, 0, -1 } };
+	private static final double[][] FILTER_SOBEL_H = { { 1, 2, 1 }, { 0, 0, 0 }, { -1, -2, -1 } };
+	private static final double[][] FILTER_SCHARR_V = { { 3, 0, -3 }, { 10, 0, -10 }, { 3, 0, -3 } };
+	private static final double[][] FILTER_SCHARR_H = { { 3, 10, 3 }, { 0, 0, 0 }, { -3, -10, -3 } };
 
 	private final HashMap<String, double[][]> filterMap;
 
@@ -46,11 +28,23 @@ public class EdgeDetection {
 		filterMap = buildFilterMap();
 	}
 
-	
+	private HashMap<String, double[][]> buildFilterMap() {
+		return null;
+	}
+//	소벨 마스크는 모든 방향의 에지를 추출한다.잡음에 강한 편이다.
+//	수직, 수평 에지 보다 대각선 방향 에지에 더 민감하게 반응한다.
+//
+//	프리윗 마스크로 콘볼루션한 결과는 소벨 마스크의 경우와 비슷하며, 응답시간이 다소 빠르다.
+//	다만, 소벨 마스크에 비해 밝기 변화에 대하여 비중이 약간 적게 준 관계로 에지가 덜 부각된다.
+//	대각선 방향 에지 보다 수직, 수평 방향 에지에 더 민감하게 반응한다.
+//
+//	로버츠 마스크는 소벨/프리윗 마스크에 비해 매우 빠른 계산 속도를 자랑한다.
+//	또한 에지를 확실하게 추출할 수 있다.
+//	그러나 소벨/프리윗  마스크에 비해 에지가 훨씬 가늘며, 잡음에 매우 민감하다.
 
-	public File detectEdges(BufferedImage bufferedImage, String selectedFilter) throws IOException {
+	public BufferedImage detectEdges(BufferedImage bufferedImage) throws IOException {
 		double[][][] image = transformImageToArray(bufferedImage);
-		double[][] filter = filterMap.get(selectedFilter);
+		double[][] filter = FILTER_SOBEL_H;
 		double[][] convolvedPixels = applyConvolution(bufferedImage.getWidth(), bufferedImage.getHeight(), image,
 				filter);
 		return createImageFromConvolutionMatrix(bufferedImage, convolvedPixels);
@@ -85,20 +79,19 @@ public class EdgeDetection {
 		return finalConv;
 	}
 
-	private File createImageFromConvolutionMatrix(BufferedImage originalImage, double[][] imageRGB) throws IOException {
-		BufferedImage writeBackImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+	private BufferedImage createImageFromConvolutionMatrix(BufferedImage originalImage, double[][] imageRGB)
+			throws IOException {
+		BufferedImage writeBackImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(),
+				BufferedImage.TYPE_INT_RGB);
 		for (int i = 0; i < imageRGB.length; i++) {
-		for (int j = 0; j < imageRGB[i].length; j++) {
-		Color color = new Color(fixOutOfRangeRGBValues(imageRGB[i][j]),
-		fixOutOfRangeRGBValues(imageRGB[i][j]),
-		fixOutOfRangeRGBValues(imageRGB[i][j]));
-		writeBackImage.setRGB(j, i, color.getRGB());
+			for (int j = 0; j < imageRGB[i].length; j++) {
+				Color color = new Color(fixOutOfRangeRGBValues(imageRGB[i][j]), fixOutOfRangeRGBValues(imageRGB[i][j]),
+						fixOutOfRangeRGBValues(imageRGB[i][j]));
+				writeBackImage.setRGB(j, i, color.getRGB());
+			}
 		}
-		}
-		File outputFile = new File("EdgeDetection/edgesTmp.png");
-		ImageIO.write(writeBackImage, "png", outputFile);
-		return outputFile;
-		}
+		return writeBackImage;
+	}
 
 	private int fixOutOfRangeRGBValues(double value) {
 		if (value < 0.0) {

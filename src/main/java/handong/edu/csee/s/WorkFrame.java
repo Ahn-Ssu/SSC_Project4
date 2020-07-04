@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.RescaleOp;
 import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -24,6 +26,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 import javax.swing.border.EtchedBorder;
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -34,36 +37,33 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 
 public class WorkFrame extends JComponent implements ActionListener, ChangeListener, MouseMotionListener, MouseInputListener{
-
+	// 인터페이스 요소들 
 	private JFrame workFrame = new JFrame("Work Space");
 	private JMenuItem openMenuItem, saveMenuItem,  composeFileLoadMenuItem ;
-	private ImageIOSurpporter supporter = new ImageIOSurpporter();
-	private ImageIOSurpporter composeSup = new ImageIOSurpporter();
-	private JLabel imageLabel, magnifyLabel;
+	private JLabel imageLabel,magnifyingLabel;
 	private JSlider SaturationSlider, ContrastSlider, exposureSlider;
 	private JLabel exposureLevelLabel, contrastLevelLabel, saturationLevelLabel;
-	private BufferedImage originImage, tempImage;
-	private JCheckBox edgeCheckBox, magnifyCheckBox;
-	private JCheckBox BWCheckBox;
-	private JLabel magnifyingLabel;
+	private JCheckBox edgeCheckBox, magnifyCheckBox,BWCheckBox;
 	private JRadioButton radio100Button,radio150Button,radio200Button;
 	private ButtonGroup group ;
+	private JComboBox comboBox;
+	// 파일 불러 오기 및 다른 클래스와 소통 
+	private ImageIOSurpporter supporter = new ImageIOSurpporter();
+	private ImageIOSurpporter composeSup = new ImageIOSurpporter();
+	private EdgeDetection myDetector = new EdgeDetection();
+	// 노출, 대비, 채도를 잡기 위한 변수 
 	private Double constrastFactor;
 	private  Double saturationFactor; 
 	private float brightenFactor;
-	
-	private boolean doBW, doMag;
-	
-	private int testCount=0;
-	private boolean doCompose;
-	
-	private BufferedImage composeImage;
-	private BufferedImage compoImageTemp;
+	// 토글 
+	private boolean doBW, doMag, doCompose, doEdge;
+	// 이미지 저장 및 유지 : 원본 -> 복사본 -> 복사본에서 이미지 처리 - > 합병 후 통째로 복사본을 그림 
+	private BufferedImage composeImage,compoImageTemp;
+	private BufferedImage originImage, tempImage;
 	private Color ImageBackColor;
 	private Point clickPoint;
 	
-	private JComboBox comboBox;
-	
+	//프레임 시각화 
 	public WorkFrame() {
 		workFrame.getContentPane().setFont(new Font("DXMSubtitlesStd", workFrame.getContentPane().getFont().getStyle(),
 				workFrame.getContentPane().getFont().getSize()));
@@ -258,6 +258,7 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		imageLabel.addMouseListener(this);
 	}
 
+	// 이미지 딥카피 메소드  원본 값을 유지하면서 복사한 곳에서 이미지 프로세싱을 하고 그것을 그리며 모든 변화가 있을때마다 원본에서부터 시작함 
 	public static BufferedImage deepCopy(BufferedImage bi) {
 		ColorModel cm = bi.getColorModel();
 		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
@@ -268,7 +269,6 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		//composeFileLoadMenuItem
 		if (e.getSource().equals(openMenuItem)) {
 			System.out.println("FILE OPEN");
 			supporter.openFile();
@@ -316,6 +316,10 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 			radio200Button.setVisible(doMag);
 			magnifyingLabel.setVisible(doMag);
 
+		}
+		else if(e.getSource().equals(edgeCheckBox)) {
+			doEdge = !doEdge;
+			setPhotoInfo(brightenFactor, constrastFactor ,saturationFactor);
 		}
 
 	}
@@ -468,7 +472,6 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		
 		
 		if(doCompose) {
-			
 			//XL 600 450
 			//L 400 300 
 			//M 200 150
@@ -616,7 +619,15 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 				}
 			}
 		}
-	
+		//Edge Detection
+		if(doEdge) {
+			try { 
+				tempImage = deepCopy(myDetector.detectEdges(tempImage));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		imageLabel.setIcon(new ImageIcon(tempImage));
 		imageLabel.revalidate();
 		imageLabel.repaint();
@@ -740,6 +751,7 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		// TODO Auto-generated method stub
 
 		clickPoint = new Point(e.getPoint());
+		if(doCompose) 
 		setPhotoInfo(brightenFactor, constrastFactor ,saturationFactor);
 		
 	}
@@ -762,38 +774,3 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		
 	}
 }
-
-
-//else if (e.getSource().equals(ContrastSlider) ) {
-//// 컨트라스트 어떻게 계산하는지 모르겠음;
-//for (int x = 0; x < originImage.getWidth(); x++) {
-//	for (int y = 0; y < originImage.getHeight(); y++) {
-//		Color color = new Color(tempImage.getRGB(x, y));
-//		float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-//		
-//	    float hue = hsb[0]; 
-//	    float saturation = hsb[1];
-//	    float brightness = hsb[2];
-//		
-//	    	if(brightness>0.55) {
-//		    	brightness = (float) (brightness + constrastFactor);
-//		    	if(brightness >0.9 ) brightness = (float) 0.9;
-//		    }
-//		    else {
-//		    	brightness = (float) (brightness - constrastFactor);
-//		    	if(brightness<0.) brightness =(float) 0.2;
-//		    }
-//	   
-//	    	saturation = (float) (saturation*saturationFactor);
-//
-//			if(saturation>1)
-//				saturation = 1;
-//		
-//		tempImage.setRGB(x,y, Color.HSBtoRGB(hue, saturation, brightness));
-//	}
-//}
-//imageLabel.setIcon(new ImageIcon(tempImage));
-//imageLabel.revalidate();
-//imageLabel.repaint();
-//
-//}
