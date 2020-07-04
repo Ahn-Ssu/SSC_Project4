@@ -5,7 +5,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -19,23 +18,20 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.Color;
 import javax.swing.JSlider;
-import java.awt.BorderLayout;
 import javax.swing.JLabel;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.MouseInputListener;
 import javax.swing.border.EtchedBorder;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
-public class WorkFrame extends JComponent implements ActionListener, ChangeListener, MouseMotionListener{
+public class WorkFrame extends JComponent implements ActionListener, ChangeListener, MouseMotionListener, MouseInputListener{
 
 	private JFrame workFrame = new JFrame("Work Space");
 	private JMenuItem openMenuItem, saveMenuItem,  composeFileLoadMenuItem ;
@@ -59,10 +55,10 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 	private int testCount=0;
 	private boolean doCompose;
 	
-	
 	private BufferedImage composeImage;
 	private BufferedImage compoImageTemp;
 	private Color ImageBackColor;
+	private Point clickPoint;
 	
 	public WorkFrame() {
 		workFrame.getContentPane().setFont(new Font("DXMSubtitlesStd", workFrame.getContentPane().getFont().getStyle(),
@@ -77,13 +73,13 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 	
 		JLabel exposureLabel = new JLabel("Exposure");
 		exposureLabel.setFont(new Font("DXMSubtitlesStd", exposureLabel.getFont().getStyle(), 13));
-		exposureLabel.setBounds(933, 33, 61, 16);
+		exposureLabel.setBounds(933, 6, 61, 16);
 		workFrame.getContentPane().add(exposureLabel);
 
 		exposureLevelLabel = new JLabel("0");
 		exposureLevelLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		exposureLevelLabel.setFont(new Font("DXMSubtitlesStd", exposureLabel.getFont().getStyle(), 13));
-		exposureLevelLabel.setBounds(1017, 33, 61, 16);
+		exposureLevelLabel.setBounds(1017, 6, 61, 16);
 		workFrame.getContentPane().add(exposureLevelLabel);
 
 		exposureSlider = new JSlider();
@@ -97,20 +93,20 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		exposureSlider.setMinorTickSpacing(1);
 		exposureSlider.setMajorTickSpacing(10);
 		exposureSlider.setMaximum(200);
-		exposureSlider.setBounds(910, 60, 190, 53);
+		exposureSlider.setBounds(910, 33, 190, 53);
 		workFrame.getContentPane().add(exposureSlider);
 
 		JLabel contrastLabel = new JLabel("Contrast");
 		contrastLabel.setFont(
 				new Font("DXMSubtitlesStd", contrastLabel.getFont().getStyle(), contrastLabel.getFont().getSize()));
-		contrastLabel.setBounds(933, 125, 61, 16);
+		contrastLabel.setBounds(933, 98, 61, 16);
 		workFrame.getContentPane().add(contrastLabel);
 
 		contrastLevelLabel = new JLabel("0");
 		contrastLevelLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		contrastLevelLabel.setFont(
 				new Font("DXMSubtitlesStd", contrastLabel.getFont().getStyle(), contrastLabel.getFont().getSize()));
-		contrastLevelLabel.setBounds(1017, 125, 61, 16);
+		contrastLevelLabel.setBounds(1017, 98, 61, 16);
 		workFrame.getContentPane().add(contrastLevelLabel);
 
 		ContrastSlider = new JSlider();
@@ -125,20 +121,20 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		ContrastSlider.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Contrast",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		ContrastSlider.setBackground(Color.DARK_GRAY);
-		ContrastSlider.setBounds(910, 152, 190, 53);
+		ContrastSlider.setBounds(910, 125, 190, 53);
 		workFrame.getContentPane().add(ContrastSlider);
 
 		JLabel saturationLabel = new JLabel("Saturation");
 		saturationLabel.setFont(
 				new Font("DXMSubtitlesStd", saturationLabel.getFont().getStyle(), saturationLabel.getFont().getSize()));
-		saturationLabel.setBounds(933, 217, 61, 16);
+		saturationLabel.setBounds(933, 190, 61, 16);
 		workFrame.getContentPane().add(saturationLabel);
 
 		saturationLevelLabel = new JLabel("0");
 		saturationLevelLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		saturationLevelLabel.setFont(
 				new Font("DXMSubtitlesStd", saturationLabel.getFont().getStyle(), saturationLabel.getFont().getSize()));
-		saturationLevelLabel.setBounds(1017, 217, 61, 16);
+		saturationLevelLabel.setBounds(1017, 190, 61, 16);
 		workFrame.getContentPane().add(saturationLevelLabel);
 
 		SaturationSlider = new JSlider();
@@ -152,7 +148,7 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		SaturationSlider.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Saturation",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		SaturationSlider.setBackground(Color.DARK_GRAY);
-		SaturationSlider.setBounds(910, 244, 190, 53);
+		SaturationSlider.setBounds(910, 217, 190, 53);
 		workFrame.getContentPane().add(SaturationSlider);
 
 		edgeCheckBox = new JCheckBox("Edge Extraction");
@@ -225,7 +221,6 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		 composeFileLoadMenuItem = new JMenuItem("Load File");
 		composeFileLoadMenuItem.setFont(new Font("DXMSubtitlesStd", composeFileLoadMenuItem.getFont().getStyle(), composeFileLoadMenuItem.getFont().getSize()));
 		composeMenu.add(composeFileLoadMenuItem);
-		// TODO Auto-generated constructor stub
 
 		workFrame.setVisible(true);
 
@@ -245,6 +240,7 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		radio200Button.addActionListener(this);
 
 		imageLabel.addMouseMotionListener(this);
+		imageLabel.addMouseListener(this);
 	}
 
 	public static BufferedImage deepCopy(BufferedImage bi) {
@@ -269,22 +265,27 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 			imageLabel.repaint();
 		}
 		else if (e.getSource().equals(composeFileLoadMenuItem)) {
+
 			System.out.println("Compose");
 			composeSup.openFile();
-			composeImage = composeSup.ResizeImage(imageLabel.getWidth(), imageLabel.getHeight() );
+			composeImage = composeSup.ResizeImage(400, 300);
 			doCompose = true;
-			setPhotoInfo(brightenFactor, constrastFactor ,saturationFactor);
 
-		
-			
+		} else if (e.getSource().equals(saveMenuItem)) {
+
+			System.out.println("Save");
+			supporter.saveImage(tempImage);
+
 		}
 		else if (e.getSource().equals(BWCheckBox)) {
+			
 			doBW = !doBW;
 			System.out.println(doBW);
 			setPhotoInfo(brightenFactor, constrastFactor ,saturationFactor);
 
 		}
 		else if(e.getSource().equals(magnifyCheckBox)) {
+			
 			doMag = !doMag;
 			
 			radio100Button.setVisible(doMag);
@@ -298,24 +299,15 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		tempImage = deepCopy(originImage);
-		compoImageTemp = deepCopy(composeImage);
 		
 		// 단순하게 필터링해서 그리는 거
 		if (e.getSource().equals(exposureSlider)|| e.getSource().equals(SaturationSlider)) {
 			setPhotoInfo(brightenFactor, constrastFactor ,saturationFactor);
-
-		setPhotoInfo(brightenFactor, constrastFactor ,saturationFactor);
 		}
-		
 	}
 	
 	public void setPhotoInfo (float brightenFactor,Double constrastFactor,Double saturationFactor) {
 
-		tempImage = deepCopy(originImage);
-		compoImageTemp = deepCopy(composeImage);
-
-		
 		exposureLevelLabel.setText(String.format("%.2f", exposureSlider.getValue() / 50.0 - 2));
 		contrastLevelLabel.setText(String.valueOf(ContrastSlider.getValue()));
 		saturationLevelLabel.setText(String.format("%.2f", SaturationSlider.getValue() / 50.0 - 2));
@@ -323,6 +315,8 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		constrastFactor = ContrastSlider.getValue() * 0.01;
 		saturationFactor = SaturationSlider.getValue() * 0.01;
 		brightenFactor = exposureSlider.getValue() * 0.01F;
+		
+		tempImage = deepCopy(originImage);
 		
 		//exposure 조절 
 		RescaleOp op = new RescaleOp(brightenFactor, 0, null);
@@ -358,43 +352,47 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 			}
 		}
 		
-		//exposure 조절 
-//				RescaleOp op = new RescaleOp(brightenFactor, 0, null);
-		compoImageTemp = op.filter(compoImageTemp, compoImageTemp);
 		
-		for(int x = 0 ; x < composeImage.getWidth(); x++) {
-			for(int y = 0 ; y < composeImage.getHeight(); y++) {
-						ImageBackColor = new Color(compoImageTemp.getRGB(0,0));
-						Color compoColor = new Color(compoImageTemp.getRGB(x, y));
-						
-						if(compoColor.equals(ImageBackColor))
-							continue;
-						
-						float[] hsb = Color.RGBtoHSB(compoColor.getRed(), compoColor.getGreen(), compoColor.getBlue(), null);
-						
-					    float hue = hsb[0]; 
-					    float saturation = hsb[1];
-					    float brightness = hsb[2];
-						saturation = (float) (saturation*saturationFactor);
+		
+		if(doCompose) {
+			//exposure 조절 
+			compoImageTemp = deepCopy(composeImage);
+//			RescaleOp op = new RescaleOp(brightenFactor, 0, null);
+			compoImageTemp = op.filter(compoImageTemp, compoImageTemp);
+			
+			for(int x = 0 ; x < composeImage.getWidth(); x++) {
+				for(int y = 0 ; y < composeImage.getHeight(); y++) {
+							ImageBackColor = new Color(compoImageTemp.getRGB(0,0));
+							Color compoColor = new Color(compoImageTemp.getRGB(x, y));
+							
+							if(compoColor.equals(ImageBackColor))
+								continue;
+							
+							float[] hsb = Color.RGBtoHSB(compoColor.getRed(), compoColor.getGreen(), compoColor.getBlue(), null);
+							
+						    float hue = hsb[0]; 
+						    float saturation = hsb[1];
+						    float brightness = hsb[2];
+							saturation = (float) (saturation*saturationFactor);
 
-						if(saturation>1)
-							saturation = 1;
-						
-						tempImage.setRGB(x,y, Color.HSBtoRGB(hue, saturation, brightness));
-						
-						//흑백인 경우 노출,  채도 반영한 뒤에  그 위에 흑백으로
-						if(doBW) {
-							Color BWColor = new Color(compoImageTemp.getRGB(x, y));
-							int BWValue = (int) (
-									0.2126 * BWColor.getRed()
-									+ 0.7152 * BWColor.getGreen()
-									+ 0.0722 * BWColor.getBlue());
-							tempImage.setRGB(x, y, new Color(BWValue, BWValue,BWValue).getRGB());
-						}
-				
+							if(saturation>1)
+								saturation = 1;
+							
+							tempImage.setRGB(x+clickPoint.x-compoImageTemp.getWidth()/2,y+clickPoint.y-compoImageTemp.getHeight()/2, Color.HSBtoRGB(hue, saturation, brightness));
+							
+							//흑백인 경우 노출,  채도 반영한 뒤에  그 위에 흑백으로
+							if(doBW) {
+								Color BWColor = new Color(compoImageTemp.getRGB(x, y));
+								int BWValue = (int) (
+										0.2126 * BWColor.getRed()
+										+ 0.7152 * BWColor.getGreen()
+										+ 0.0722 * BWColor.getBlue());
+								tempImage.setRGB(x+clickPoint.x-compoImageTemp.getWidth()/2,y+clickPoint.y-compoImageTemp.getHeight()/2, new Color(BWValue, BWValue,BWValue).getRGB());
+							}
+				}
 			}
 		}
-		
+	
 		imageLabel.setIcon(new ImageIcon(tempImage));
 		imageLabel.revalidate();
 		imageLabel.repaint();
@@ -414,32 +412,50 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		if(magnifyCheckBox.isSelected()) {
 			
 			if(radio100Button.isSelected()) {
-				for(int x=0 ; x < 180 ; x ++) {
-					for(int y = 0 ; y < 180 ; y++){
+				for(int x=0 ; x < magnifyingLabel.getWidth() ; x ++) {
+					for(int y = 0 ; y < magnifyingLabel.getHeight() ; y++){
 						
 						Point mPoint = e.getPoint();
-						if(mPoint.x>620)
-							mPoint.x = 620;
-						if(mPoint.y>420)
-							mPoint.y = 420;
+						if(mPoint.x>imageLabel.getWidth() - magnifyingLabel.getWidth()/2)
+							mPoint.x = imageLabel.getWidth() - magnifyingLabel.getWidth()/2;
 						
-						Color color = new Color(tempImage.getRGB(x + mPoint.x,y+mPoint.y));
+						if(mPoint.x<magnifyingLabel.getWidth()/2)
+							mPoint.x = magnifyingLabel.getWidth()/2;
+						
+						if(mPoint.y>imageLabel.getHeight() - magnifyingLabel.getHeight())
+							mPoint.y = imageLabel.getHeight() - magnifyingLabel.getHeight();
+						
+						if(mPoint.y<magnifyingLabel.getHeight()/2)
+							mPoint.y = magnifyingLabel.getHeight()/2;
+						
+						Color color = new Color(tempImage.getRGB(
+								x + mPoint.x - magnifyingLabel.getWidth()/2,
+								y + mPoint.y - magnifyingLabel.getWidth()/2));
 						bi.setRGB(x, y, color.getRGB());
 						
 					}
 				}
 			}
 			else if(radio150Button.isSelected()) {
-				for(int x=0 ; x < 180/2 ; x  ++) {
-					for(int y = 0 ; y < 180/2 ; y ++){
+				for(int x=0 ; x < magnifyingLabel.getWidth()/2 ; x  ++) {
+					for(int y = 0 ; y < magnifyingLabel.getHeight()/2 ; y ++){
 						
 						Point mPoint = e.getPoint();
-						if(mPoint.x>620+180/2)
-							mPoint.x = 620+180/2;
-						if(mPoint.y>420+180/2)
-							mPoint.y = 420+180/2;
+						if(mPoint.x>imageLabel.getWidth()-magnifyingLabel.getWidth()+magnifyingLabel.getWidth()/2)
+							mPoint.x =imageLabel.getWidth()-magnifyingLabel.getWidth()+magnifyingLabel.getWidth()/2;
 						
-						Color color = new Color(tempImage.getRGB(x + mPoint.x,y+mPoint.y));
+						if(mPoint.x<magnifyingLabel.getWidth()/4)
+							mPoint.x = magnifyingLabel.getWidth()/4;
+						
+						if(mPoint.y>imageLabel.getHeight() - magnifyingLabel.getHeight()+magnifyingLabel.getHeight()/2)
+							mPoint.y = imageLabel.getHeight() - magnifyingLabel.getHeight()+magnifyingLabel.getHeight()/2;
+						
+						if(mPoint.y<magnifyingLabel.getHeight()/4)
+							mPoint.y = magnifyingLabel.getHeight()/4;
+						
+						Color color = new Color(tempImage.getRGB(
+								x + mPoint.x - magnifyingLabel.getWidth()/4,
+								y + mPoint.y - magnifyingLabel.getHeight()/4));
 						bi.setRGB(2*x, 2*y, color.getRGB());
 						bi.setRGB(2*x, 2*y+1, color.getRGB());
 						bi.setRGB(2*x+1, 2*y, color.getRGB());
@@ -449,17 +465,26 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 				}
 			}
 			else if(radio200Button.isSelected()) {
-				for(int x=0 ; x < 180/3 ;  x++ ) {
-					for(int y = 0 ; y < 180/3 ; y++){
+				for(int x=0 ; x < magnifyingLabel.getWidth()/3 ;  x++ ) {
+					for(int y = 0 ; y < magnifyingLabel.getHeight()/3 ; y++){
 						
 						Point mPoint = e.getPoint();
-						if(mPoint.x>620+180/3)
-							mPoint.x = 620+180/3;
-						if(mPoint.y>420+180/3)
-							mPoint.y = 420+180/3;
 						
-						Color color = new Color(tempImage.getRGB(x + mPoint.x,y+mPoint.y));
-						bi.setRGB(3*x, 3*y, color.getRGB());
+						if(mPoint.x>imageLabel.getWidth()-magnifyingLabel.getWidth()+magnifyingLabel.getWidth()/3)
+							mPoint.x =imageLabel.getWidth()-magnifyingLabel.getWidth()+magnifyingLabel.getWidth()/3;
+						
+						if(mPoint.x<magnifyingLabel.getWidth()/6)
+							mPoint.x = magnifyingLabel.getWidth()/6;
+						
+						if(mPoint.y>imageLabel.getHeight() - magnifyingLabel.getHeight()+magnifyingLabel.getHeight()/3)
+							mPoint.y = imageLabel.getHeight() - magnifyingLabel.getHeight()+magnifyingLabel.getHeight()/3;
+						
+						if(mPoint.y<magnifyingLabel.getHeight()/6)
+							mPoint.y = magnifyingLabel.getHeight()/6;
+						
+						Color color = new Color(tempImage.getRGB(
+								x + mPoint.x - magnifyingLabel.getWidth()/6,
+								y + mPoint.y - magnifyingLabel.getHeight()/6));						bi.setRGB(3*x, 3*y, color.getRGB());
 						bi.setRGB(3*x, 3*y+1, color.getRGB());
 						bi.setRGB(3*x, 3*y+2, color.getRGB());
 						bi.setRGB(3*x+1, 3*y, color.getRGB());
@@ -480,33 +505,41 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		
 		
 	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+		clickPoint = new Point(e.getPoint());
+		setPhotoInfo(brightenFactor, constrastFactor ,saturationFactor);
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
-//RescaleOp op = new RescaleOp(brightenFactor, 0, null);
-//tempImage = op.filter(tempImage, tempImage);
-//
-//for (int x = 0; x < originImage.getWidth(); x++) {
-//	for (int y = 0; y < originImage.getHeight(); y++) {
-//		Color color = new Color(tempImage.getRGB(x, y));
-//		float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-//		
-//	    float hue = hsb[0]; 
-//	    float saturation = hsb[1];
-//	    float brightness = hsb[2];
-//		saturation = (float) (saturation*saturationFactor);
-//
-//		if(saturation>1)
-//			saturation = 1;
-//		
-//		tempImage.setRGB(x,y, Color.HSBtoRGB(hue, saturation, brightness));
-//		
-//	}
-//}
-//
-//imageLabel.setIcon(new ImageIcon(tempImage));
-//imageLabel.revalidate();
-//imageLabel.repaint();
-//}
+
 //else if (e.getSource().equals(ContrastSlider) ) {
 //// 컨트라스트 어떻게 계산하는지 모르겠음;
 //for (int x = 0; x < originImage.getWidth(); x++) {
