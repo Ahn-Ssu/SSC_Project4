@@ -30,6 +30,8 @@ import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class WorkFrame extends JComponent implements ActionListener, ChangeListener, MouseMotionListener, MouseInputListener{
 
@@ -60,6 +62,8 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 	private Color ImageBackColor;
 	private Point clickPoint;
 	
+	private JComboBox comboBox;
+	
 	public WorkFrame() {
 		workFrame.getContentPane().setFont(new Font("DXMSubtitlesStd", workFrame.getContentPane().getFont().getStyle(),
 				workFrame.getContentPane().getFont().getSize()));
@@ -72,14 +76,15 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 
 	
 		JLabel exposureLabel = new JLabel("Exposure");
-		exposureLabel.setFont(new Font("DXMSubtitlesStd", exposureLabel.getFont().getStyle(), 13));
-		exposureLabel.setBounds(933, 6, 61, 16);
+		exposureLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		exposureLabel.setFont(new Font("DXMSubtitlesStd", exposureLabel.getFont().getStyle(), 15));
+		exposureLabel.setBounds(865, 6, 97, 16);
 		workFrame.getContentPane().add(exposureLabel);
 
 		exposureLevelLabel = new JLabel("0");
 		exposureLevelLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		exposureLevelLabel.setFont(new Font("DXMSubtitlesStd", exposureLabel.getFont().getStyle(), 13));
-		exposureLevelLabel.setBounds(1017, 6, 61, 16);
+		exposureLevelLabel.setBounds(949, 6, 151, 16);
 		workFrame.getContentPane().add(exposureLevelLabel);
 
 		exposureSlider = new JSlider();
@@ -93,20 +98,21 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		exposureSlider.setMinorTickSpacing(1);
 		exposureSlider.setMajorTickSpacing(10);
 		exposureSlider.setMaximum(200);
-		exposureSlider.setBounds(910, 33, 190, 53);
+		exposureSlider.setBounds(842, 33, 258, 53);
 		workFrame.getContentPane().add(exposureSlider);
 
 		JLabel contrastLabel = new JLabel("Contrast");
+		contrastLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		contrastLabel.setFont(
-				new Font("DXMSubtitlesStd", contrastLabel.getFont().getStyle(), contrastLabel.getFont().getSize()));
-		contrastLabel.setBounds(933, 98, 61, 16);
+				new Font("DXMSubtitlesStd", exposureLabel.getFont().getStyle(), 15));
+		contrastLabel.setBounds(865, 98, 97, 16);
 		workFrame.getContentPane().add(contrastLabel);
 
 		contrastLevelLabel = new JLabel("0");
 		contrastLevelLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		contrastLevelLabel.setFont(
 				new Font("DXMSubtitlesStd", contrastLabel.getFont().getStyle(), contrastLabel.getFont().getSize()));
-		contrastLevelLabel.setBounds(1017, 98, 61, 16);
+		contrastLevelLabel.setBounds(949, 98, 151, 16);
 		workFrame.getContentPane().add(contrastLevelLabel);
 
 		ContrastSlider = new JSlider();
@@ -121,20 +127,21 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		ContrastSlider.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Contrast",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		ContrastSlider.setBackground(Color.DARK_GRAY);
-		ContrastSlider.setBounds(910, 125, 190, 53);
+		ContrastSlider.setBounds(842, 125, 258, 53);
 		workFrame.getContentPane().add(ContrastSlider);
 
 		JLabel saturationLabel = new JLabel("Saturation");
+		saturationLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		saturationLabel.setFont(
-				new Font("DXMSubtitlesStd", saturationLabel.getFont().getStyle(), saturationLabel.getFont().getSize()));
-		saturationLabel.setBounds(933, 190, 61, 16);
+				new Font("DXMSubtitlesStd", exposureLabel.getFont().getStyle(), 15));
+		saturationLabel.setBounds(865, 190, 97, 16);
 		workFrame.getContentPane().add(saturationLabel);
 
 		saturationLevelLabel = new JLabel("0");
 		saturationLevelLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		saturationLevelLabel.setFont(
 				new Font("DXMSubtitlesStd", saturationLabel.getFont().getStyle(), saturationLabel.getFont().getSize()));
-		saturationLevelLabel.setBounds(1017, 190, 61, 16);
+		saturationLevelLabel.setBounds(949, 190, 151, 16);
 		workFrame.getContentPane().add(saturationLevelLabel);
 
 		SaturationSlider = new JSlider();
@@ -148,19 +155,19 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		SaturationSlider.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Saturation",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		SaturationSlider.setBackground(Color.DARK_GRAY);
-		SaturationSlider.setBounds(910, 217, 190, 53);
+		SaturationSlider.setBounds(842, 217, 258, 53);
 		workFrame.getContentPane().add(SaturationSlider);
 
 		edgeCheckBox = new JCheckBox("Edge Extraction");
 		edgeCheckBox.setFont(
-				new Font("DXMSubtitlesStd", edgeCheckBox.getFont().getStyle(), edgeCheckBox.getFont().getSize()));
-		edgeCheckBox.setBounds(910, 333, 184, 23);
+				new Font("DXMSubtitlesStd", edgeCheckBox.getFont().getStyle(), edgeCheckBox.getFont().getSize() + 2));
+		edgeCheckBox.setBounds(860, 280, 184, 23);
 		workFrame.getContentPane().add(edgeCheckBox);
 
 		magnifyCheckBox = new JCheckBox("Magnifying Helper");
 		magnifyCheckBox.setFont(
 				new Font("DXMSubtitlesStd", edgeCheckBox.getFont().getStyle(), edgeCheckBox.getFont().getSize()));
-		magnifyCheckBox.setBounds(910, 423, 184, 23);
+		magnifyCheckBox.setBounds(860, 370, 184, 23);
 		workFrame.getContentPane().add(magnifyCheckBox);
 
 		imageLabel = new JLabel(" ");
@@ -168,29 +175,29 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		workFrame.getContentPane().add(imageLabel);
 		
 		BWCheckBox = new JCheckBox("Black n White View");
-		BWCheckBox.setFont(new Font("DXMSubtitlesStd", BWCheckBox.getFont().getStyle(), BWCheckBox.getFont().getSize()));
-		BWCheckBox.setBounds(910, 378, 184, 23);
+		BWCheckBox.setFont(new Font("DXMSubtitlesStd", BWCheckBox.getFont().getStyle(), 15));
+		BWCheckBox.setBounds(860, 325, 184, 23);
 		workFrame.getContentPane().add(BWCheckBox);
 		
 		magnifyingLabel = new JLabel(" ");
-		magnifyingLabel.setBounds(910, 567, 180, 180);
+		magnifyingLabel.setBounds(854, 510, 240, 240);
 		workFrame.getContentPane().add(magnifyingLabel);
 		
 		 radio100Button = new JRadioButton("100%");
 		radio100Button.setFont(new Font("DXMSubtitlesStd", radio100Button.getFont().getStyle(), radio100Button.getFont().getSize()));
-		radio100Button.setBounds(937, 458, 141, 23);
+		radio100Button.setBounds(887, 405, 141, 23);
 		workFrame.getContentPane().add(radio100Button);
 		radio100Button.setVisible(false);
 		
 		 radio150Button = new JRadioButton("150%");
 		radio150Button.setFont(new Font("DXMSubtitlesStd", radio100Button.getFont().getStyle(), radio100Button.getFont().getSize()));
-		radio150Button.setBounds(937, 493, 141, 23);
+		radio150Button.setBounds(887, 440, 141, 23);
 		workFrame.getContentPane().add(radio150Button);
 		radio150Button.setVisible(false);
 
 		 radio200Button = new JRadioButton("200%");
 		radio200Button.setFont(new Font("DXMSubtitlesStd", radio100Button.getFont().getStyle(), radio100Button.getFont().getSize()));
-		radio200Button.setBounds(937, 528, 141, 23);
+		radio200Button.setBounds(887, 475, 141, 23);
 		workFrame.getContentPane().add(radio200Button);
 		workFrame.setJMenuBar(menuBar);
 		radio200Button.setVisible(false);
@@ -200,6 +207,14 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		group.add(radio150Button);
 		group.add(radio200Button);
 		radio100Button.setSelected(true);
+		
+		comboBox = new JComboBox();
+		comboBox.setFont(new Font("DXMSubtitlesStd", comboBox.getFont().getStyle(), comboBox.getFont().getSize()));
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"100 x   75  - S", "200 x 150  - M", "400 x 300  - L", "600 x 450  - XL"}));
+		comboBox.setSelectedIndex(1);
+		comboBox.setBounds(611, 36, 184, 27);
+		workFrame.getContentPane().add(comboBox);
+		comboBox.setVisible(false);
 		
 
 		JMenu fileMenu = new JMenu("File / 파일");
@@ -268,8 +283,15 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 
 			System.out.println("Compose");
 			composeSup.openFile();
-			composeImage = composeSup.ResizeImage(400, 300);
+			composeImage = composeSup.ResizeImage(200, 150);
+			//XL 600 450
+			//L 400 300 
+			//M 200 150
+			//S 100 75
 			doCompose = true;
+			comboBox.setVisible(doCompose);
+			
+			
 
 		} else if (e.getSource().equals(saveMenuItem)) {
 
@@ -282,6 +304,7 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 			doBW = !doBW;
 			System.out.println(doBW);
 			setPhotoInfo(brightenFactor, constrastFactor ,saturationFactor);
+			
 
 		}
 		else if(e.getSource().equals(magnifyCheckBox)) {
@@ -301,7 +324,7 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 	public void stateChanged(ChangeEvent e) {
 		
 		// 단순하게 필터링해서 그리는 거
-		if (e.getSource().equals(exposureSlider)|| e.getSource().equals(SaturationSlider)) {
+		if (e.getSource().equals(exposureSlider)|| e.getSource().equals(SaturationSlider) || e.getSource().equals(ContrastSlider)) {
 			setPhotoInfo(brightenFactor, constrastFactor ,saturationFactor);
 		}
 	}
@@ -337,6 +360,96 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 				if(saturation>1)
 					saturation = 1;
 				
+				//고대비를 만들때, 뭉쳐있던 친구들을 나눠서 차이를 선명하게 둠 
+				if(constrastFactor>0) {
+					
+					// 한 임계값으로 다가가되, 다가가는 속도의 차이를 둠 
+					if(brightness>0.5) {// 밝은 친구들은 더 밝은 곳으로 
+						if(brightness>0.5 && brightness<0.6 ) {
+							brightness = (float) (brightness + constrastFactor*0.5);
+						}
+						else if(brightness>0.6 && brightness<0.7) {
+							brightness = (float) (brightness + constrastFactor*0.4);
+						}
+						else if (brightness > 0.7 && brightness < 0.8) {
+							brightness = (float) (brightness + constrastFactor*0.3);
+						}
+						else if (brightness > 0.8 && brightness < 0.9) {
+							brightness = (float) (brightness + constrastFactor*0.2);
+						} 
+						else if (brightness > 0.9 && brightness < 1) {
+							brightness = (float) (brightness + constrastFactor*0.1);
+						}
+						
+						if(brightness > 1)
+							brightness = 1;
+					}
+					else {	// 어두운 친구들은 더 어두운 곳으로 
+						if(brightness>0.4 && brightness<0.5 ) {
+							brightness = (float) (brightness - constrastFactor*0.5);
+						}
+						else if(brightness>0.3 && brightness<0.4) {
+							brightness = (float) (brightness - constrastFactor*0.4);
+						}
+						else if (brightness > 0.2 && brightness < 0.3) {
+							brightness = (float) (brightness - constrastFactor*0.3);
+						}
+						else if (brightness > 0.1 && brightness < 0.2) {
+							brightness = (float) (brightness - constrastFactor*0.2);
+						} 
+						else if (brightness > 0 && brightness < 0.1) {
+							brightness = (float) (brightness - constrastFactor*0.1);
+						}
+						
+						if(brightness < 0)
+							brightness = 0;
+					}
+				}
+				else {
+					
+					if(brightness>0.5) {// 밝은 친구들은 중간방향으로 조금 더 어두운 값으로 
+						if(brightness>0.5 && brightness<0.6 ) {
+							brightness = (float) (brightness + constrastFactor*0.1);
+						}
+						else if(brightness>0.6 && brightness<0.7) {
+							brightness = (float) (brightness + constrastFactor*0.2);
+						}
+						else if (brightness > 0.7 && brightness < 0.8) {
+							brightness = (float) (brightness + constrastFactor*0.3);
+						}
+						else if (brightness > 0.8 && brightness < 0.9) {
+							brightness = (float) (brightness + constrastFactor*0.4);
+						} 
+						else if (brightness > 0.9 && brightness < 1) {
+							brightness = (float) (brightness + constrastFactor*0.5);
+						}
+						
+						if(brightness < 0.5)
+							brightness = 0.5F;
+					}
+					else {			// 어두운 친구들은 중간임계점으로 조금 더 밝은 값으로 
+						if(brightness>0.4 && brightness<0.5 ) {
+							brightness = (float) (brightness - constrastFactor*0.1);
+						}
+						else if(brightness>0.3 && brightness<0.4) {
+							brightness = (float) (brightness - constrastFactor*0.2);
+						}
+						else if (brightness > 0.2 && brightness < 0.3) {
+							brightness = (float) (brightness - constrastFactor*0.3);
+						}
+						else if (brightness > 0.1 && brightness < 0.2) {
+							brightness = (float) (brightness - constrastFactor*0.4);
+						} 
+						else if (brightness > 0 && brightness < 0.1) {
+							brightness = (float) (brightness - constrastFactor*0.5);
+						}
+						
+						if(brightness > 0.5)
+							brightness = 0.5F;
+					}
+					
+				}
+				
 				tempImage.setRGB(x,y, Color.HSBtoRGB(hue, saturation, brightness));
 				
 				//흑백인 경우 노출,  채도 반영한 뒤에  그 위에 흑백으로
@@ -355,6 +468,27 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 		
 		
 		if(doCompose) {
+			
+			//XL 600 450
+			//L 400 300 
+			//M 200 150
+			//S 100 75
+			if(comboBox.getSelectedIndex() == 0 ) {
+				composeImage = composeSup.ResizeImage(100, 75);
+			}
+			else if (comboBox.getSelectedIndex() == 1) {
+				composeImage = composeSup.ResizeImage(200, 150);
+			} 
+			else if (comboBox.getSelectedIndex() == 2) {
+				composeImage = composeSup.ResizeImage(400, 300);
+			} 
+			else if (comboBox.getSelectedIndex() == 3) {
+				composeImage = composeSup.ResizeImage(600, 450);
+			}
+			
+			
+
+			
 			//exposure 조절 
 			compoImageTemp = deepCopy(composeImage);
 //			RescaleOp op = new RescaleOp(brightenFactor, 0, null);
@@ -377,6 +511,96 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 
 							if(saturation>1)
 								saturation = 1;
+							
+							
+							if(constrastFactor>0) {
+								
+								// 한 임계값으로 다가가되, 다가가는 속도의 차이를 둠 
+								if(brightness>0.5) {// 밝은 친구들은 더 밝은 곳으로 
+									if(brightness>0.5 && brightness<0.6 ) {
+										brightness = (float) (brightness + constrastFactor*0.5);
+									}
+									else if(brightness>0.6 && brightness<0.7) {
+										brightness = (float) (brightness + constrastFactor*0.4);
+									}
+									else if (brightness > 0.7 && brightness < 0.8) {
+										brightness = (float) (brightness + constrastFactor*0.3);
+									}
+									else if (brightness > 0.8 && brightness < 0.9) {
+										brightness = (float) (brightness + constrastFactor*0.2);
+									} 
+									else if (brightness > 0.9 && brightness < 1) {
+										brightness = (float) (brightness + constrastFactor*0.1);
+									}
+									
+									if(brightness > 1)
+										brightness = 1;
+								}
+								else {	// 어두운 친구들은 더 어두운 곳으로 
+									if(brightness>0.4 && brightness<0.5 ) {
+										brightness = (float) (brightness - constrastFactor*0.5);
+									}
+									else if(brightness>0.3 && brightness<0.4) {
+										brightness = (float) (brightness - constrastFactor*0.4);
+									}
+									else if (brightness > 0.2 && brightness < 0.3) {
+										brightness = (float) (brightness - constrastFactor*0.3);
+									}
+									else if (brightness > 0.1 && brightness < 0.2) {
+										brightness = (float) (brightness - constrastFactor*0.2);
+									} 
+									else if (brightness > 0 && brightness < 0.1) {
+										brightness = (float) (brightness - constrastFactor*0.1);
+									}
+									
+									if(brightness < 0)
+										brightness = 0;
+								}
+							}
+							else {
+								
+								if(brightness>0.5) {// 밝은 친구들은 중간방향으로 조금 더 어두운 값으로 
+									if(brightness>0.5 && brightness<0.6 ) {
+										brightness = (float) (brightness + constrastFactor*0.1);
+									}
+									else if(brightness>0.6 && brightness<0.7) {
+										brightness = (float) (brightness + constrastFactor*0.2);
+									}
+									else if (brightness > 0.7 && brightness < 0.8) {
+										brightness = (float) (brightness + constrastFactor*0.3);
+									}
+									else if (brightness > 0.8 && brightness < 0.9) {
+										brightness = (float) (brightness + constrastFactor*0.4);
+									} 
+									else if (brightness > 0.9 && brightness < 1) {
+										brightness = (float) (brightness + constrastFactor*0.5);
+									}
+									
+									if(brightness < 0.5)
+										brightness = 0.5F;
+								}
+								else {			// 어두운 친구들은 중간임계점으로 조금 더 밝은 값으로 
+									if(brightness>0.4 && brightness<0.5 ) {
+										brightness = (float) (brightness - constrastFactor*0.1);
+									}
+									else if(brightness>0.3 && brightness<0.4) {
+										brightness = (float) (brightness - constrastFactor*0.2);
+									}
+									else if (brightness > 0.2 && brightness < 0.3) {
+										brightness = (float) (brightness - constrastFactor*0.3);
+									}
+									else if (brightness > 0.1 && brightness < 0.2) {
+										brightness = (float) (brightness - constrastFactor*0.4);
+									} 
+									else if (brightness > 0 && brightness < 0.1) {
+										brightness = (float) (brightness - constrastFactor*0.5);
+									}
+									
+									if(brightness > 0.5)
+										brightness = 0.5F;
+								}
+								
+							}
 							
 							tempImage.setRGB(x+clickPoint.x-compoImageTemp.getWidth()/2,y+clickPoint.y-compoImageTemp.getHeight()/2, Color.HSBtoRGB(hue, saturation, brightness));
 							
@@ -407,7 +631,7 @@ public class WorkFrame extends JComponent implements ActionListener, ChangeListe
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		
-		BufferedImage bi = new BufferedImage(180,180,BufferedImage.TYPE_INT_RGB);
+		BufferedImage bi = new BufferedImage(magnifyingLabel.getWidth(),magnifyingLabel.getHeight(),BufferedImage.TYPE_INT_RGB);
 
 		if(magnifyCheckBox.isSelected()) {
 			
