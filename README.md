@@ -1,5 +1,5 @@
 # SCC_Project 4.
-##### 2020 Summer Coding Camp - Project #2 (Prof. KIM HJ)
+##### 2020 Summer Coding Camp - Project #4 (Prof. KIM HJ)
 ###### 21600402 Ahn SuHyun
 
 
