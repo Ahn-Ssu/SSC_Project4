@@ -1,7 +1,8 @@
-# SCC_Project 4.
+# miniPhotoshop
 ##### 2020 Summer Coding Camp - Project #4 (Prof. KIM HJ)
 ###### 21600402 Ahn SuHyun
 
+task 4th
 
 ## Task : Image Processing (Basic Editor) 
 ### Time Period : 2 days
